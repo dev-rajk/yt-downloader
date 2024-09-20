@@ -5,11 +5,11 @@ import os
 def download_audio(url):
     # Use yt-dlp to download the audio; it will handle naming automatically
     command = [
-        "yt-dlp ",
-        "--extract-audio ",
-        "--audio-format ",
-        "mp3 ",
-        "--URL ",
+        "yt-dlp",
+        "--extract-audio",
+        "--audio-format",
+        "mp3",
+        "--URL",
         url
     ]
     try:
