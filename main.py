@@ -9,7 +9,6 @@ def download_audio(url):
         "--extract-audio",
         "--audio-format",
         "mp3",
-        "URL",
         url
     ]
     try:
