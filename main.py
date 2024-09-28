@@ -21,8 +21,7 @@ def download_audio(url):
     command = [
         "yt-dlp",
         "--extract-audio",
-        "--audio-format",
-        "mp3",
+        "--audio-format", "mp3",
         url
     ]
     try:
@@ -30,8 +29,14 @@ def download_audio(url):
         subprocess.run(command, check=True)
     except subprocess.CalledProcessError as e:
         # Return the error message from yt-dlp
-        return str(e)
-    return "Download complete!"
+        return None, str(e)
+
+    # Find the downloaded MP3 file
+    files = [f for f in os.listdir() if f.endswith('.mp3')]
+    if files:
+        return files[0], "Download complete!"
+    else:
+        return None, "No audio files found."
 
 def main():
     st.title("Audio Downloader")
@@ -48,17 +53,20 @@ def main():
                     return
 
             with st.spinner("Downloading..."):
-                result = download_audio(real_url)
-                if result == "Download complete!":
-                    # List the downloaded files in the current directory
-                    files = [f for f in os.listdir() if f.endswith('.mp3')]
-                    if files:
-                        st.success(result)
-                        st.markdown("### Downloaded Files:")
-                        for file in files:
-                            st.markdown(f"[{file}](./{file})")
-                    else:
-                        st.error("No audio files found.")
+                audio_file, result = download_audio(real_url)
+                if audio_file:
+                    st.success(result)
+
+                    # Provide a download button for the MP3 file
+                    with open(audio_file, 'rb') as f:
+                        audio_bytes = f.read()
+
+                    st.download_button(
+                        label="Download MP3",
+                        data=audio_bytes,
+                        file_name=audio_file,
+                        mime='audio/mpeg'
+                    )
                 else:
                     st.error(result)
         else:
